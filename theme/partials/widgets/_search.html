@@ -1,0 +1,14 @@
+
+{% load static %}
+<aside class="single_sidebar_widget search_widget">
+    <form action="{% url 'blog' %}" method="GET">
+        <div class="form-group m-0">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search Keyword" value="{{ query|default:'' }}">
+                <div class="input-group-append d-flex">
+                    <button class="boxed-btn2" type="submit">Search</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</aside>

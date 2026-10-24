@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} | Hotel{% endblock %}
+
+{% block content %}
+    <!-- Hero Area Start-->
+    <div class="slider-area hero-bg1 hero-overly">
+        <div class="single-slider slider-height3 d-flex align-items-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-7 col-lg-11">
+                        <div class="hero-caption hero-caption3">
+                            <h1>Blog Details</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Hero Area End-->
+
+    <!-- Blog Area Start -->
+    <section class="blog_area single-post-area section-padding">
+        <div class="container">
+            <div class="row">
+
+                <!-- Post Content -->
+                <div class="col-lg-8 posts-list">
+                    <div class="single-post">
+
+                        <div class="feature-img">
+                            {% if post.image %}
+                                <img class="img-fluid" src="{{ post.image.url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+                            {% else %}
+                                <img class="img-fluid" src="{% static 'img/blog/single_blog_1.jpg' %}" alt="{{ post.title }}" loading="lazy" decoding="async">
+                            {% endif %}
+                        </div>
+
+                        <div class="blog_details">
+                            <h2 style="color:#2d2d2d;">{{ post.title }}</h2>
+                            <ul class="blog-info-link mt-3 mb-4">
+                                <li>
+                                    <a href="{% url 'blog' %}?author={{ post.author.id }}">
+                                        <i class="fa fa-user"></i> {{ post.author.get_full_name|default:post.author.username }}
+                                    </a>
+                                </li>
+                                {% if post.categories.all %}
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-tag"></i>
+                                        {% for cat in post.categories.all %}{{ cat.name }}{% if not forloop.last %} | {% endif %}{% endfor %}
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li>
+                                    <a href="#"><i class="fa fa-calendar"></i> {{ post.created_at|date:"F d, Y" }}</a>
+                                </li>
+                                <li>
+                                    <a href="#"><i class="fa fa-eye"></i> {{ post.views }} Views</a>
+                                </li>
+                                <li>
+                                    <a href="#comments"><i class="fa fa-comments"></i> {{ comments.count }} Comments</a>
+                                </li>
+                            </ul>
+                            <div class="post-content">
+                                {{ post.content|safe }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prev / Next -->
+                    <div class="navigation-top">
+                        <div class="navigation-area">
+                            <div class="row">
+                                {% if prev_post %}
+                                <div class="col-lg-6 col-md-6 col-12 nav-left flex-row d-flex justify-content-start align-items-center">
+                                    <div class="arrow">
+                                        <a href="{% url 'blog_details' prev_post.id %}">
+                                            <span class="lnr text-white ti-arrow-left"></span>
+                                        </a>
+                                    </div>
+                                    <div class="detials">
+                                        <p>Prev Post</p>
+                                        <a href="{% url 'blog_details' prev_post.id %}">
+                                            <h4 style="color:#2d2d2d;">{{ prev_post.title|truncatechars:30 }}</h4>
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if next_post %}
+                                <div class="col-lg-6 col-md-6 col-12 nav-right flex-row d-flex justify-content-end align-items-center">
+                                    <div class="detials">
+                                        <p>Next Post</p>
+                                        <a href="{% url 'blog_details' next_post.id %}">
+                                            <h4 style="color:#2d2d2d;">{{ next_post.title|truncatechars:30 }}</h4>
+                                        </a>
+                                    </div>
+                                    <div class="arrow">
+                                        <a href="{% url 'blog_details' next_post.id %}">
+                                            <span class="lnr text-white ti-arrow-right"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Author -->
+                    <div class="blog-author">
+                        <div class="media align-items-center">
+                            <img src="{% static 'img/blog/author.png' %}" alt="" loading="lazy" decoding="async">
+                            <div class="media-body">
+                                <a href="{% url 'blog' %}?author={{ post.author.id }}">
+                                    <h4>{{ post.author.get_full_name|default:post.author.username }}</h4>
+                                </a>
+                                <p>{{ post.author.email }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== Comments ===== -->
+                    <div class="comments-area" id="comments">
+
+                        {% if comments %}
+                        <h4>{{ comments.count }} Comment{{ comments.count|pluralize }}</h4>
+
+                        {% for comment in comments %}
+                        <!-- Parent Comment -->
+                        <div class="single-comment" id="comment-{{ comment.id }}">
+                            <div class="comment-avatar {% if comment.author.is_staff %}is-admin{% else %}is-user{% endif %}">
+                                {% if comment.author.is_staff %}
+                                    <i class="fa fa-shield-alt"></i>
+                                {% else %}
+                                    <i class="fa fa-user"></i>
+                                {% endif %}
+                            </div>
+                            <div class="comment-body">
+                                <div class="comment-meta">
+                                    <span class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</span>
+                                    {% if comment.author.is_staff %}
+                                    <span class="admin-badge">ADMIN</span>
+                                    {% endif %}
+                                    <span class="comment-date">{{ comment.created_at|date:"M d, Y" }}</span>
+                                </div>
+                                <p class="comment-text">{{ comment.content }}</p>
+                                {% if user.is_staff %}
+                                <button class="reply-btn" onclick="toggleReplyForm({{ comment.id }})">
+                                    <i class="fa fa-reply"></i> Reply
+                                </button>
+                                <div class="reply-form-box" id="reply-form-{{ comment.id }}">
+                                    <textarea id="reply-content-{{ comment.id }}" placeholder="Write your reply..." rows="3"></textarea>
+                                    <button class="comment-submit-btn" onclick="submitComment({{ post.id }}, {{ comment.id }}, 'reply-content-{{ comment.id }}')">
+                                        Post Reply
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Replies -->
+                        {% for reply in comment.get_replies %}
+                        <div class="single-comment is-reply">
+                            <div class="comment-avatar {% if reply.author.is_staff %}is-admin{% else %}is-user{% endif %}">
+                                {% if reply.author.is_staff %}
+                                    <i class="fa fa-shield-alt"></i>
+                                {% else %}
+                                    <i class="fa fa-user"></i>
+                                {% endif %}
+                            </div>
+                            <div class="comment-body">
+                                <div class="comment-meta">
+                                    <span class="comment-author">{{ reply.author.get_full_name|default:reply.author.username }}</span>
+                                    {% if reply.author.is_staff %}
+                                    <span class="admin-badge">ADMIN</span>
+                                    {% endif %}
+                                    <span class="comment-date">{{ reply.created_at|date:"M d, Y" }}</span>
+                                </div>
+                                <p class="comment-text">{{ reply.content }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% endfor %}
+                        {% else %}
+                        <h4>Comments</h4>
+                        <p style="color:#aaa; font-size:14px;">No comments yet. Be the first!</p>
+                        {% endif %}
+
+                    </div>
+
+                    <!-- ===== Comment Form ===== -->
+                    <div class="comment-form-area">
+                        <h4>Leave a Comment</h4>
+                        {% if user.is_authenticated %}
+                        <textarea id="main-comment-content" placeholder="Write your comment..." rows="4"></textarea>
+                        <button class="comment-submit-btn" onclick="submitComment({{ post.id }}, null, 'main-comment-content')">
+                            Post Comment
+                        </button>
+                        {% else %}
+                        <div style="background:#faf7f5; border-radius:6px; padding:24px; text-align:center; border:1px dashed #e0d5d0;">
+                            <i class="fa fa-lock" style="font-size:28px; color:#e29c89; margin-bottom:10px; display:block;"></i>
+                            <p style="color:#777; font-size:14px; margin-bottom:14px;">You need to be logged in to leave a comment.</p>
+                            <a href="#" onclick="showAuthModal(); return false;" class="comment-submit-btn" style="text-decoration:none; display:inline-block;">
+                                Login to Comment
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    {% include 'partials/_blog_sidebar.html' %}
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- Blog Area End -->
+
+    <!-- Auth Required Modal -->
+    <div class="auth-required-modal" id="auth-modal">
+        <div class="modal-box">
+            <i class="fa fa-comment-slash"></i>
+            <h4>Login Required</h4>
+            <p>You need to be logged in to leave a comment or reply.</p>
+            <div class="modal-actions">
+                <a href="{% url 'login' %}?next={{ request.path }}" class="btn-login">Login</a>
+                <a href="{% url 'register' %}" class="btn-register">Register</a>
+            </div>
+            <button class="btn-cancel" onclick="hideAuthModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Comment Success/Error Toast -->
+    <div id="comment-toast" style="display:none; position:fixed; bottom:30px; right:30px; z-index:9999; min-width:280px; padding:14px 20px; border-radius:6px; font-size:14px; box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+        <span id="comment-toast-msg"></span>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ── Auth Modal ────────────────────────────────────────
+    function showAuthModal() {
+        var modal = document.getElementById('auth-modal');
+        modal.style.display = 'flex';
+    }
+    function hideAuthModal() {
+        document.getElementById('auth-modal').style.display = 'none';
+    }
+    document.getElementById('auth-modal').addEventListener('click', function(e) {
+        if (e.target === this) hideAuthModal();
+    });
+
+    // ── Reply Form Toggle ─────────────────────────────────
+    function toggleReplyForm(commentId) {
+        {% if user.is_authenticated %}
+        var box = document.getElementById('reply-form-' + commentId);
+        box.style.display = box.style.display === 'block' ? 'none' : 'block';
+        {% else %}
+        showAuthModal();
+        {% endif %}
+    }
+
+    // ── Toast Notification ────────────────────────────────
+    function showToast(message, type) {
+        var toast = document.getElementById('comment-toast');
+        var msg = document.getElementById('comment-toast-msg');
+        msg.innerText = message;
+        if (type === 'success') {
+            toast.style.background = '#d4edda';
+            toast.style.color = '#155724';
+            toast.style.border = '1px solid #c3e6cb';
+        } else {
+            toast.style.background = '#f8d7da';
+            toast.style.color = '#721c24';
+            toast.style.border = '1px solid #f5c6cb';
+        }
+        toast.style.display = 'block';
+        setTimeout(function() { toast.style.display = 'none'; }, 4000);
+    }
+
+    // ── Submit Comment ────────────────────────────────────
+    function submitComment(postId, parentId, textareaId) {
+        var textarea = document.getElementById(textareaId);
+        var content = textarea.value.trim();
+
+        if (!content) {
+            showToast('Please write something before submitting.', 'error');
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('content', content);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        if (parentId) formData.append('parent_id', parentId);
+
+        fetch('/blog/' + postId + '/comment/', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.status === 'success') {
+                textarea.value = '';
+                if (parentId) {
+                    document.getElementById('reply-form-' + parentId).style.display = 'none';
+                }
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
+            }
+        })
+        .catch(function() {
+            showToast('Something went wrong. Please try again.', 'error');
+        });
+    }
+</script>
+{% endblock %}

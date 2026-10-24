@@ -1,0 +1,115 @@
+{% load static %}
+<header>
+    <div class="header-area header-transparent">
+        <div class="main-header">
+            <div class="header-top">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="d-flex justify-content-between flex-wrap align-items-center">
+                                <!-- Left: Contact Info -->
+                                <div class="header-info-left">
+                                    <ul>
+                                        <li>Call Us: +10 (89) 675 5456</li>
+                                        <li><div class="header-auth">
+                                        {% if user.is_authenticated %}
+                                        <span class="auth-username">
+                                            <i class="fa fa-user"></i> {{ user.username }}
+                                        </span>
+                                        <span>/</span>
+                                        
+                                        <a href="#" class="auth-btn-outline" onclick="showLogoutConfirm(event)">Logout</a>
+
+                                    <!-- Logout Confirm Modal -->
+                                    <div id="logout-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+                                        <div style="background:#fff; border-radius:8px; padding:36px 40px; max-width:380px; width:90%; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+                                            <i class="fa fa-sign-out-alt" style="font-size:36px; color:#e29c89; margin-bottom:14px;"></i>
+                                            <h4 style="color:#2d2d2d; margin-bottom:10px;">Sign Out</h4>
+                                            <p style="color:#777; font-size:14px; margin-bottom:24px;">Are you sure you want to logout?</p>
+                                            
+                                            <div style="display:flex; gap:12px; justify-content:center;">
+                                                <a href="{% url 'logout' %}"
+                                                   style="background:#e29c89; color:#fff; border:none; padding:10px 28px; border-radius:4px; font-size:14px; font-weight:600; text-decoration:none; cursor:pointer; transition:background 0.2s;"
+                                                   onmouseover="this.style.background='#d4826d'"
+                                                   onmouseout="this.style.background='#e29c89'">
+                                                    Yes, Logout
+                                                </a>
+                                                
+                                                <button onclick="hideLogoutConfirm()"
+                                                    style="background:#f0f0f0; color:#555; border:none; padding:10px 28px; border-radius:4px; font-size:14px; cursor:pointer; transition:background 0.2s;"
+                                                    onmouseover="this.style.background='#ddd'"
+                                                    onmouseout="this.style.background='#f0f0f0'">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        function showLogoutConfirm(e) {
+                                            e.preventDefault();
+                                            var overlay = document.getElementById('logout-overlay');
+                                            overlay.style.display = 'flex';
+                                        }
+                                        function hideLogoutConfirm() {
+                                            document.getElementById('logout-overlay').style.display = 'none';
+                                        }
+                                        document.getElementById('logout-overlay').addEventListener('click', function(e) {
+                                            if (e.target === this) hideLogoutConfirm();
+                                        });
+                                    </script>
+                                        {% else %}
+                                        <a href="{% url 'login' %}" class="auth-btn-outline">Login</a>
+                                        <span>/</span>
+                                        <a href="{% url 'register' %}" class="auth-btn-solid">Register</a>
+                                        {% endif %}
+                                    </div></li>
+                                    </ul>
+                                </div>
+                                <!-- Right: Social + Auth -->
+                                <div class="header-info-right d-flex align-items-center">
+                                    <ul class="header-social mr-3">
+                                        <li><a href="#"><i class="fab fa-facebook"></i></a></li>
+                                        <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                                        <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+                                    </ul>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-bottom header-sticky">
+                <div class="container-fluid">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                        <!-- Logo -->
+                        <div class="logo">
+                            <a href="{% url 'home' %}">
+                                <img src="{% static 'img/logo/logo.png' %}" alt="" fetchpriority="high" decoding="sync">
+                            </a>
+                        </div>
+                        <div class="menu-wrapper d-flex align-items-center">
+                            <!-- Main-menu -->
+                            <div class="main-menu d-none d-lg-block">
+                                <nav>
+                                    <ul id="navigation">
+                                        <li><a href="{% url 'home' %}">Home</a></li>
+                                        <li><a href="{% url 'rooms' %}">Rooms</a></li>
+                                        <li><a href="{% url 'about' %}">About</a></li>
+                                        <li><a href="{% url 'blog' %}">Blog</a></li>
+                                        <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <!-- Mobile Menu -->
+                        <div class="col-12">
+                            <div class="mobile_menu d-block d-lg-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

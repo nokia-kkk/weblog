@@ -1,0 +1,21 @@
+{% load static %}
+<aside class="single_sidebar_widget popular_post_widget">
+    <h3 class="widget_title" style="color: #2d2d2d;">Recent Posts</h3>
+    {% for recent in recent_posts %}
+    <div class="media post_item">
+        {% if recent.image %}
+            <img src="{{ recent.image.url }}" alt="post" style="width: 90px; height: 70px; object-fit: cover;" loading="lazy" decoding="async">
+        {% else %}
+            <img src="{% static 'img/post/post_1.jpg' %}" alt="post" style="width: 90px; height: 70px; object-fit: cover;" loading="lazy" decoding="async">
+        {% endif %}
+        <div class="media-body">
+            <a href="{% url 'blog_details' recent.id %}">
+                <h3 style="color: #2d2d2d;">{{ recent.title|truncatechars:30 }}</h3>
+            </a>
+            <p>{{ recent.created_at|date:"F d, Y" }}</p>
+        </div>
+    </div>
+    {% empty %}
+    <p style="color:#999;">No posts yet.</p>
+    {% endfor %}
+</aside>

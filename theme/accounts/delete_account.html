@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Account | Hotel{% endblock %}
+
+{% block content %}
+<div class="auth-area" style="background-image: url('{% static "img/hero/h1_hero.jpg" %}');">
+    <div class="container">
+        <div class="auth-card">
+            <h2>Delete Account</h2>
+            <p class="auth-subtitle">This action is permanent and cannot be undone.</p>
+
+            <div class="delete-account-box">
+                <h4>Are you sure?</h4>
+                <p style="color:#555; font-size:14px; margin-bottom:20px;">
+                    All your data will be permanently removed.
+                </p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete">Yes, delete my account</button>
+                </form>
+                <div style="margin-top:15px;">
+                    <a href="{% url 'home' %}" class="auth-link" style="font-size:13px;">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

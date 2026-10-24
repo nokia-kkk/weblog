@@ -1,0 +1,138 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blog | Hotel{% endblock %}
+
+{% block content %}
+    <!-- Hero Area Start-->
+    <div class="slider-area hero-bg1 hero-overly">
+        <div class="single-slider slider-height3 d-flex align-items-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-7 col-lg-11">
+                        <div class="hero-caption hero-caption3">
+                            <h1>Blog</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Hero Area End-->
+
+    <!-- Blog Area Start-->
+    <section class="blog_area section-padding">
+        <div class="container">
+
+            {% if query %}
+            <div class="row mb-3">
+                <div class="col-12">
+                    <p style="color:#2d2d2d;">
+                        Search results for: <strong>"{{ query }}"</strong>
+                        — {{ page_obj.paginator.count }} result(s) found.
+                        <a href="{% url 'blog' %}" style="margin-left:10px;">Clear</a>
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row">
+
+                <!-- Blog Posts -->
+                <div class="col-lg-8 mb-5 mb-lg-0">
+                    <div class="blog_left_sidebar">
+
+                        {% for post in posts %}
+                        <article class="blog_item">
+                            <div class="blog_item_img">
+                                {% if post.image %}
+                                    <img class="card-img rounded-0" src="{{ post.image.url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+                                {% else %}
+                                    <img class="card-img rounded-0" src="{% static 'img/blog/single_blog_1.jpg' %}" alt="{{ post.title }}" loading="lazy" decoding="async">
+                                {% endif %}
+                                <a href="{% url 'blog_details' post.id %}" class="blog_item_date">
+                                    <h3>{{ post.created_at|date:"d" }}</h3>
+                                    <p>{{ post.created_at|date:"M" }}</p>
+                                </a>
+                            </div>
+                            <div class="blog_details">
+                                <a class="d-inline-block" href="{% url 'blog_details' post.id %}">
+                                    <h2 class="blog-head" style="color: #2d2d2d;">{{ post.title }}</h2>
+                                </a>
+                                <p>{{ post.get_excerpt }}</p>
+                                <ul class="blog-info-link">
+                                    <li>
+                                        <a href="?author={{ post.author.id }}">
+                                            <i class="fa fa-user"></i> {{ post.author.get_full_name|default:post.author.username }}
+                                        </a>
+                                    </li>
+                                    {% if post.categories.all %}
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-tag"></i>
+                                            {% for cat in post.categories.all %}{{ cat.name }}{% if not forloop.last %} | {% endif %}{% endfor %}
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    <li>
+                                        <a href="#"><i class="fa fa-eye"></i> {{ post.views }} Views</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </article>
+                        {% empty %}
+                        <div class="text-center py-5">
+                            <p style="color: #2d2d2d;">No posts found.</p>
+                        </div>
+                        {% endfor %}
+
+                        <!-- Pagination -->
+                        {% if page_obj.paginator.num_pages > 1 %}
+                        <nav class="blog-pagination justify-content-center d-flex mt-4">
+                            <ul class="pagination">
+
+                                {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                                       class="page-link pagination-btn">
+                                        <i class="ti-angle-left"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                                {% for num in page_obj.paginator.page_range %}
+                                <li class="page-item">
+                                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}page={{ num }}"
+                                       class="page-link pagination-btn {% if page_obj.number == num %}pagination-active{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if selected_category %}category={{ selected_category }}&{% endif %}page={{ page_obj.next_page_number }}"
+                                       class="page-link pagination-btn">
+                                        <i class="ti-angle-right"></i>
+                                    </a>
+                                </li>
+                                {% endif %}
+
+                            </ul>
+                        </nav>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    {% include 'partials/_blog_sidebar.html' %}
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- Blog Area End -->
+{% endblock %}
